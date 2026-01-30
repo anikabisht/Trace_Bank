@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 TRACE BANK - MAIN FASTAPI BACKEND
@@ -13,28 +13,28 @@ import uvicorn
 from datetime import datetime
 import hashlib
 
-from decision_engine import make_decision, update_policy
-from ml_engine import ContinuousMLEngine, calculate_behavior_score
+from backend.decision_engine import make_decision, update_policy
+from backend.ml_engine import ContinuousMLEngine, calculate_behavior_score
 
 
 
 # Import our engines
 try:
-    from data_tracker import RealDataTracker
+    from backend.data_tracker import RealDataTracker
 except Exception:
     RealDataTracker=None
 try:
-    from counterfactual import CounterfactualEngine
+    from backend.counterfactual import CounterfactualEngine
 except Exception:
     CounterfactualEngine=None
 try:
-    from scenario_engine import ScenarioEngine
+    from backend.scenario_engine import ScenarioEngine
 except Exception:
     ScenarioEngine=None
 import os
 
 # Initialize engines
-from ml_engine import ContinuousMLEngine
+from backend.ml_engine import ContinuousMLEngine
 ml_engine = ContinuousMLEngine()
 data_tracker = RealDataTracker()
 counterfactual_engine = CounterfactualEngine()
@@ -51,7 +51,7 @@ class TransactionRequest(BaseModel):
     location_permission: bool = False
     scenario_type: str = "normal"
     
-    # ✅ REAL GPS FIELDS
+    # âœ… REAL GPS FIELDS
     latitude: float | None = None
     longitude: float | None = None
 
@@ -312,7 +312,7 @@ async def process_transaction(request: TransactionRequest, http_request: Request
         scenario_metadata = None
         
         # 1. AUTO-TRACK user data (with permission) - Use real IP geolocation
-        # ✅ REAL LOCATION HANDLING (GPS + IP fallback)
+        # âœ… REAL LOCATION HANDLING (GPS + IP fallback)
 
     # If frontend sends real GPS location
     # ================= REAL LOCATION LOGIC =================
@@ -434,7 +434,7 @@ async def process_transaction(request: TransactionRequest, http_request: Request
         if scenario_type in ['fraud_ring', 'behavioral_anomaly']:
             decision = 'DECLINED'
             risk_level = 'FRAUD_DETECTED' if scenario_type == 'fraud_ring' else 'ANOMALY_DETECTED'
-            # ✅ FINAL SAFETY CHECK
+            # âœ… FINAL SAFETY CHECK
             if 'risk_level' not in locals():
                 risk_level = "UNKNOWN"
 
